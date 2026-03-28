@@ -2,6 +2,10 @@
 
 A multi-agent decision-making system featuring diverse agent personalities that collaborate through persistent memory and structured deliberation cycles. Get balanced perspectives from different viewpoints before making decisions.
 
+## Live Deployment
+
+- Frontend: https://council-indol.vercel.app/
+
 ## Local Setup
 
 ### Prerequisites
@@ -164,7 +168,7 @@ This setup uses free hosting for both frontend and backend with zero infrastruct
     - Key: `VITE_API_BASE_URL`
     - Value: Your Render backend URL (from Step 1, e.g., `https://council-api.onrender.com`)
 6. Deploy
-7. Once deployed, your frontend URL will be shown (e.g., `https://council.vercel.app`)
+7. Once deployed, your frontend URL will be shown (current deployment: `https://council-indol.vercel.app/`)
 
 #### Step 3: Access Your Deployment
 
