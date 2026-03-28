@@ -86,7 +86,7 @@ class BaseAgent:
 
         for peer in peer_names:
             peer_response = responses.get(peer, "")
-            if peer_response:
+            if peer_response and not self._is_error_response(peer_response):
                 lines.append(f"- {peer.capitalize()}: {peer_response}")
 
         if not lines:
@@ -142,6 +142,14 @@ class BaseAgent:
 
         return [s.strip() for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s.strip()]
 
+    @staticmethod
+    def _is_error_response(response):
+        if not isinstance(response, str):
+            return False
+
+        lowered = response.strip().lower()
+        return lowered.startswith("[error]:") or "timed out" in lowered or "http 4" in lowered or "http 5" in lowered
+
     def determine_sentence_range(self, exchange_number, total_exchanges, has_prior_responses):
         """Choose response length based on conversation stage and available context."""
         if not has_prior_responses:
@@ -154,6 +162,9 @@ class BaseAgent:
 
     def enforce_response_quality(self, response, min_sentences=4, max_sentences=5):
         """Normalize response length to a high-quality 4-5 sentence answer."""
+        if self._is_error_response(response):
+            return response.strip()
+
         sentences = self._split_sentences(response)
         if min_sentences <= len(sentences) <= max_sentences:
             return response.strip()
@@ -274,6 +285,26 @@ Original response:
         return memory
 
     def save_response_and_memory(self, memory, response, peer_names, exchange_number, peer_response_map=None):
+        if self._is_error_response(response):
+            memory["last_response"] = response
+            memory["exchange_snapshots"].append(
+                {
+                    "exchange": exchange_number,
+                    "response": response,
+                    "opinion_scores": {
+                        peer: memory["opinions"][peer].get("score", 0)
+                        for peer in peer_names
+                    },
+                    "error": True
+                }
+            )
+
+            try:
+                save_json(self.memory_file, memory)
+            except Exception as exc:
+                print(f"[MEMORY SAVE ERROR] {self.name} -> {self.memory_file}: {exc}")
+            return
+
         memory["last_response"] = response
         memory["self_history"].append(response)
 
@@ -297,7 +328,10 @@ Original response:
             }
         )
 
-        save_json(self.memory_file, memory)
+        try:
+            save_json(self.memory_file, memory)
+        except Exception as exc:
+            print(f"[MEMORY SAVE ERROR] {self.name} -> {self.memory_file}: {exc}")
 
     def critique(self, other_response, other_agent_name):
         """

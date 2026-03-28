@@ -1,5 +1,44 @@
+import json
+import os
+from pathlib import Path
+
 from personalizer.personalizer import get_user_context
 from agents.loader import get_agents
+
+
+def _reset_agent_memories(agents):
+    """Reset per-agent memory files so each run starts as a fresh conversation."""
+    for agent in agents:
+        memory_path = Path(getattr(agent, "memory_file", ""))
+        if not memory_path:
+            continue
+
+        try:
+            if not memory_path.exists():
+                continue
+
+            with open(memory_path, "r", encoding="utf-8") as f:
+                memory = json.load(f)
+
+            if not isinstance(memory, dict):
+                continue
+
+            memory["self_history"] = []
+            memory["exchange_snapshots"] = []
+            memory["last_response"] = ""
+
+            opinions = memory.get("opinions", {})
+            if isinstance(opinions, dict):
+                for peer_name, peer_data in opinions.items():
+                    if isinstance(peer_data, dict):
+                        peer_data["score"] = 0
+                        peer_data["latest_view"] = ""
+                        peer_data["history"] = []
+
+            with open(memory_path, "w", encoding="utf-8") as f:
+                json.dump(memory, f, indent=4)
+        except Exception as exc:
+            print(f"[MEMORY RESET WARN] {getattr(agent, 'name', 'unknown')} -> {memory_path}: {exc}")
 
 
 def select_mode():
@@ -26,6 +65,11 @@ def main():
     query, context = get_user_context(mode)
 
     agents = get_agents(mode)
+
+    # Default behavior: start each run as a fresh conversation memory state.
+    # Set RESET_MEMORY_ON_START=0 to preserve memories between runs.
+    if os.getenv("RESET_MEMORY_ON_START", "1").strip() == "1":
+        _reset_agent_memories(agents)
 
     print("\n--- AGENT RESPONSES ---\n")
 
