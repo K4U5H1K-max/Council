@@ -300,7 +300,7 @@ class CouncilAPIHandler(BaseHTTPRequestHandler):
         )
 
 
-def run_server(host="127.0.0.1", port=8000):
+def run_server(host="0.0.0.0", port=int("PORT","8000")):
     server = HTTPServer((host, port), CouncilAPIHandler)
     print(f"Council API running on http://{host}:{port}")
     server.serve_forever()

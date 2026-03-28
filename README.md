@@ -121,6 +121,90 @@ This applies to both CLI and API server modes. Set `RESET_MEMORY_ON_START=1` to 
 
 ---
 
+## Deployment
+
+### Quick Deploy to Vercel + Render (Free Tier)
+
+This setup uses free hosting for both frontend and backend with zero infrastructure costs.
+
+#### Prerequisites
+
+- GitHub account with your Council repository
+- Vercel account (free tier) at https://vercel.com
+- Render account (free tier) at https://render.com
+- OpenAI API key for LLM functionality
+
+#### Step 1: Deploy Backend to Render
+
+1. Go to https://render.com and sign in with GitHub
+2. Click "New +" and select "Web Service"
+3. Connect your Council repository
+4. Configure the service:
+    - Name: `council-api`
+    - Root Directory: `test`
+    - Build Command: (leave blank or `pip install python-dotenv`)
+    - Start Command: `python api_server.py`
+5. Add environment variable:
+    - Key: `OPENAI_API_KEY`
+    - Value: Your OpenAI API key
+6. Create Web Service (free tier, ~0.5GB RAM)
+7. Wait for deployment and copy your service URL (e.g., `https://council-api.onrender.com`)
+
+#### Step 2: Deploy Frontend to Vercel
+
+1. Go to https://vercel.com and sign in with GitHub
+2. Click "Add New..." and select "Project"
+3. Import your Council repository
+4. Configure the project:
+    - Framework Preset: `Vite`
+    - Root Directory: `./frontend`
+    - Build Command: `npm run build`
+    - Output Directory: `dist`
+5. Add environment variable:
+    - Key: `VITE_API_BASE_URL`
+    - Value: Your Render backend URL (from Step 1, e.g., `https://council-api.onrender.com`)
+6. Deploy
+7. Once deployed, your frontend URL will be shown (e.g., `https://council.vercel.app`)
+
+#### Step 3: Access Your Deployment
+
+- Frontend: Visit your Vercel URL
+- API Health Check: Visit `https://council-api.onrender.com/api/health`
+
+### Local Development with Environment Variables
+
+For local development pointing to a deployed backend:
+
+#### Backend (.env in `test/` directory)
+```bash
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+#### Frontend (.env in `frontend/` directory)
+```bash
+VITE_API_BASE_URL=https://your-render-backend.onrender.com
+```
+
+Then run:
+```bash
+# Terminal 1: Backend
+cd test
+source .venv/bin/activate
+python api_server.py
+
+# Terminal 2: Frontend
+cd frontend
+npm run dev
+```
+
+### Persistent Agent Memory in Production
+
+By default, agent memories persist across restarts within Render's filesystem. This means:
+- Agent memories are preserved between API calls (single deployment)
+- If the free-tier Render container restarts (happens after 15 minutes of inactivity), memories are retained
+- To reset all memories on next deployment, set `RESET_MEMORY_ON_START=1` in Render environment variables
+
+
 ## Architecture
 
 ### System Overview

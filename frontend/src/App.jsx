@@ -7,10 +7,20 @@ import Page2Agents from "./components/Page2Agents";
 import Page3Decision from "./components/Page3Decision";
 import { agentConfigs } from "./config/agentConfigs";
 
-const API_CANDIDATES = [
-  "http://127.0.0.1:8000/api",
-  "/api",
-];
+// Build API candidates from environment variable or defaults
+const getApiCandidates = () => {
+  const envApiUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+  if (envApiUrl) {
+    return [envApiUrl + "/api"];
+  }
+  // Fallback: try localhost first, then relative path
+  return [
+    "http://127.0.0.1:8000/api",
+    "/api",
+  ];
+};
+
+const API_CANDIDATES = getApiCandidates();
 
 const IRRELEVANT_OPERATION_PATTERNS = [
   /\bwrite\s+code\b/i,
