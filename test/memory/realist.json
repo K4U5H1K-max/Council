@@ -1,9 +1,139 @@
 {
-    "self_history": [],
+    "self_history": [
+        "RCB winning the IPL again is a possibility, but it's essential to consider the competitive landscape of the tournament and the team's current performance. Given the variability in team dynamics and player form, it's challenging to predict a repeat win with certainty. The likelihood of RCB winning again depends on factors such as their squad strength, strategic decisions, and how they adapt to the pressures of the tournament. Ultimately, while a repeat win is possible, it's crucial to acknowledge the uncertainties and competitiveness of the IPL, making it a difficult feat to achieve.",
+        "While the Optimist and Whatif_ambitious present enthusiastic scenarios, I must challenge their assumption that RCB's past success guarantees future wins. The Pessimist's caution about potential pitfalls is well-founded, and I agree that factors like injuries, team chemistry, and strategic missteps can significantly impact RCB's chances. It's essential to consider the competitive landscape and the team's current performance, rather than relying on past glories or unproven methods. The likelihood of RCB winning the IPL again is uncertain and depends on various factors, including their squad strength and adaptability, making it crucial to acknowledge the uncertainties and competitiveness of the tournament. By recognizing these constraints, we can develop a more realistic understanding of RCB's potential for success.",
+        "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99571, Requested 1776. Please try again in 19m23.808s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+        "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99569, Requested 2217. Please try again in 25m43.104s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    ],
+    "exchange_snapshots": [
+        {
+            "exchange": 1,
+            "response": "RCB winning the IPL again is a possibility, but it's essential to consider the competitive landscape of the tournament and the team's current performance. Given the variability in team dynamics and player form, it's challenging to predict a repeat win with certainty. The likelihood of RCB winning again depends on factors such as their squad strength, strategic decisions, and how they adapt to the pressures of the tournament. Ultimately, while a repeat win is possible, it's crucial to acknowledge the uncertainties and competitiveness of the IPL, making it a difficult feat to achieve.",
+            "opinion_scores": {
+                "whatif_ambitious": 0,
+                "optimist": 0,
+                "pessimist": 0
+            }
+        },
+        {
+            "exchange": 2,
+            "response": "While the Optimist and Whatif_ambitious present enthusiastic scenarios, I must challenge their assumption that RCB's past success guarantees future wins. The Pessimist's caution about potential pitfalls is well-founded, and I agree that factors like injuries, team chemistry, and strategic missteps can significantly impact RCB's chances. It's essential to consider the competitive landscape and the team's current performance, rather than relying on past glories or unproven methods. The likelihood of RCB winning the IPL again is uncertain and depends on various factors, including their squad strength and adaptability, making it crucial to acknowledge the uncertainties and competitiveness of the tournament. By recognizing these constraints, we can develop a more realistic understanding of RCB's potential for success.",
+            "opinion_scores": {
+                "whatif_ambitious": 0,
+                "optimist": 0,
+                "pessimist": 1
+            }
+        },
+        {
+            "exchange": 3,
+            "response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99571, Requested 1776. Please try again in 19m23.808s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+            "opinion_scores": {
+                "whatif_ambitious": -1,
+                "optimist": -1,
+                "pessimist": 0
+            }
+        },
+        {
+            "exchange": 4,
+            "response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99569, Requested 2217. Please try again in 25m43.104s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+            "opinion_scores": {
+                "whatif_ambitious": -2,
+                "optimist": -2,
+                "pessimist": -1
+            }
+        }
+    ],
     "opinions": {
-        "ambitious": 0,
-        "optimist": 0,
-        "pessimist": 0
+        "whatif_ambitious": {
+            "score": -2,
+            "latest_view": "While the Optimist and Whatif_ambitious present enthusiastic scenarios, I must challenge their assumption that RCB's past success guarantees future wins.",
+            "history": [
+                {
+                    "exchange": 1,
+                    "delta": 0,
+                    "score": 0,
+                    "view": ""
+                },
+                {
+                    "exchange": 2,
+                    "delta": 0,
+                    "score": 0,
+                    "view": "While the Optimist and Whatif_ambitious present enthusiastic scenarios, I must challenge their assumption that RCB's past success guarantees future wins."
+                },
+                {
+                    "exchange": 3,
+                    "delta": -1,
+                    "score": -1,
+                    "view": "While the Optimist and Whatif_ambitious present enthusiastic scenarios, I must challenge their assumption that RCB's past success guarantees future wins."
+                },
+                {
+                    "exchange": 4,
+                    "delta": -1,
+                    "score": -2,
+                    "view": "While the Optimist and Whatif_ambitious present enthusiastic scenarios, I must challenge their assumption that RCB's past success guarantees future wins."
+                }
+            ]
+        },
+        "optimist": {
+            "score": -2,
+            "latest_view": "While the Optimist and Whatif_ambitious present enthusiastic scenarios, I must challenge their assumption that RCB's past success guarantees future wins.",
+            "history": [
+                {
+                    "exchange": 1,
+                    "delta": 0,
+                    "score": 0,
+                    "view": ""
+                },
+                {
+                    "exchange": 2,
+                    "delta": 0,
+                    "score": 0,
+                    "view": "While the Optimist and Whatif_ambitious present enthusiastic scenarios, I must challenge their assumption that RCB's past success guarantees future wins."
+                },
+                {
+                    "exchange": 3,
+                    "delta": -1,
+                    "score": -1,
+                    "view": "While the Optimist and Whatif_ambitious present enthusiastic scenarios, I must challenge their assumption that RCB's past success guarantees future wins."
+                },
+                {
+                    "exchange": 4,
+                    "delta": -1,
+                    "score": -2,
+                    "view": "While the Optimist and Whatif_ambitious present enthusiastic scenarios, I must challenge their assumption that RCB's past success guarantees future wins."
+                }
+            ]
+        },
+        "pessimist": {
+            "score": -1,
+            "latest_view": "The Pessimist's caution about potential pitfalls is well-founded, and I agree that factors like injuries, team chemistry, and strategic missteps can significantly impact RCB's c...",
+            "history": [
+                {
+                    "exchange": 1,
+                    "delta": 0,
+                    "score": 0,
+                    "view": ""
+                },
+                {
+                    "exchange": 2,
+                    "delta": 1,
+                    "score": 1,
+                    "view": "The Pessimist's caution about potential pitfalls is well-founded, and I agree that factors like injuries, team chemistry, and strategic missteps can significantly impact RCB's c..."
+                },
+                {
+                    "exchange": 3,
+                    "delta": -1,
+                    "score": 0,
+                    "view": "The Pessimist's caution about potential pitfalls is well-founded, and I agree that factors like injuries, team chemistry, and strategic missteps can significantly impact RCB's c..."
+                },
+                {
+                    "exchange": 4,
+                    "delta": -1,
+                    "score": -1,
+                    "view": "The Pessimist's caution about potential pitfalls is well-founded, and I agree that factors like injuries, team chemistry, and strategic missteps can significantly impact RCB's c..."
+                }
+            ]
+        }
     },
-    "last_response": ""
+    "last_response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99569, Requested 2217. Please try again in 25m43.104s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
 }

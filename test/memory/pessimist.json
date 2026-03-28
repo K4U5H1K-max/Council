@@ -1,9 +1,139 @@
 {
-    "self_history": [],
+    "self_history": [
+        "I must caution against the overly optimistic views presented by the Optimist and Whatif_ambitious, as their scenarios overlook the numerous pitfalls that could derail RCB's chances of winning the IPL again. The Realist's mention of uncertainties and competitiveness is well-founded, but even that may not fully capture the potential risks, such as injuries to key players, poor team chemistry, or unexpected strategic missteps. Whatif_ambitious's proposal to aggressively invest in strategic player acquisitions and cutting-edge analytics is fraught with risk, as it may lead to an unbalanced team or an overreliance on unproven methods. Furthermore, the Optimist's assumption that RCB's past success can be a catalyst for future wins ignores the possibility that other teams may have learned from RCB's strategies and adapted to counter them. By ignoring these potential downsides, we may be setting ourselves up for disappointment and failure.",
+        "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99572, Requested 1632. Please try again in 17m20.256s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+        "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99569, Requested 2205. Please try again in 25m32.735999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+        "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99568, Requested 2572. Please try again in 30m48.959999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    ],
+    "exchange_snapshots": [
+        {
+            "exchange": 1,
+            "response": "I must caution against the overly optimistic views presented by the Optimist and Whatif_ambitious, as their scenarios overlook the numerous pitfalls that could derail RCB's chances of winning the IPL again. The Realist's mention of uncertainties and competitiveness is well-founded, but even that may not fully capture the potential risks, such as injuries to key players, poor team chemistry, or unexpected strategic missteps. Whatif_ambitious's proposal to aggressively invest in strategic player acquisitions and cutting-edge analytics is fraught with risk, as it may lead to an unbalanced team or an overreliance on unproven methods. Furthermore, the Optimist's assumption that RCB's past success can be a catalyst for future wins ignores the possibility that other teams may have learned from RCB's strategies and adapted to counter them. By ignoring these potential downsides, we may be setting ourselves up for disappointment and failure.",
+            "opinion_scores": {
+                "realist": 1,
+                "whatif_ambitious": 0,
+                "optimist": -1
+            }
+        },
+        {
+            "exchange": 2,
+            "response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99572, Requested 1632. Please try again in 17m20.256s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+            "opinion_scores": {
+                "realist": 0,
+                "whatif_ambitious": -1,
+                "optimist": -2
+            }
+        },
+        {
+            "exchange": 3,
+            "response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99569, Requested 2205. Please try again in 25m32.735999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+            "opinion_scores": {
+                "realist": -1,
+                "whatif_ambitious": -2,
+                "optimist": -3
+            }
+        },
+        {
+            "exchange": 4,
+            "response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99568, Requested 2572. Please try again in 30m48.959999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+            "opinion_scores": {
+                "realist": -2,
+                "whatif_ambitious": -3,
+                "optimist": -4
+            }
+        }
+    ],
     "opinions": {
-        "realist": 0,
-        "ambitious": 0,
-        "optimist": 0
+        "realist": {
+            "score": -2,
+            "latest_view": "The Realist's mention of uncertainties and competitiveness is well-founded, but even that may not fully capture the potential risks, such as injuries to key players, poor team c...",
+            "history": [
+                {
+                    "exchange": 1,
+                    "delta": 1,
+                    "score": 1,
+                    "view": "The Realist's mention of uncertainties and competitiveness is well-founded, but even that may not fully capture the potential risks, such as injuries to key players, poor team c..."
+                },
+                {
+                    "exchange": 2,
+                    "delta": -1,
+                    "score": 0,
+                    "view": "The Realist's mention of uncertainties and competitiveness is well-founded, but even that may not fully capture the potential risks, such as injuries to key players, poor team c..."
+                },
+                {
+                    "exchange": 3,
+                    "delta": -1,
+                    "score": -1,
+                    "view": "The Realist's mention of uncertainties and competitiveness is well-founded, but even that may not fully capture the potential risks, such as injuries to key players, poor team c..."
+                },
+                {
+                    "exchange": 4,
+                    "delta": -1,
+                    "score": -2,
+                    "view": "The Realist's mention of uncertainties and competitiveness is well-founded, but even that may not fully capture the potential risks, such as injuries to key players, poor team c..."
+                }
+            ]
+        },
+        "whatif_ambitious": {
+            "score": -3,
+            "latest_view": "Whatif_ambitious's proposal to aggressively invest in strategic player acquisitions and cutting-edge analytics is fraught with risk, as it may lead to an unbalanced team or an o...",
+            "history": [
+                {
+                    "exchange": 1,
+                    "delta": 0,
+                    "score": 0,
+                    "view": "Whatif_ambitious's proposal to aggressively invest in strategic player acquisitions and cutting-edge analytics is fraught with risk, as it may lead to an unbalanced team or an o..."
+                },
+                {
+                    "exchange": 2,
+                    "delta": -1,
+                    "score": -1,
+                    "view": "Whatif_ambitious's proposal to aggressively invest in strategic player acquisitions and cutting-edge analytics is fraught with risk, as it may lead to an unbalanced team or an o..."
+                },
+                {
+                    "exchange": 3,
+                    "delta": -1,
+                    "score": -2,
+                    "view": "Whatif_ambitious's proposal to aggressively invest in strategic player acquisitions and cutting-edge analytics is fraught with risk, as it may lead to an unbalanced team or an o..."
+                },
+                {
+                    "exchange": 4,
+                    "delta": -1,
+                    "score": -3,
+                    "view": "Whatif_ambitious's proposal to aggressively invest in strategic player acquisitions and cutting-edge analytics is fraught with risk, as it may lead to an unbalanced team or an o..."
+                }
+            ]
+        },
+        "optimist": {
+            "score": -4,
+            "latest_view": "Furthermore, the Optimist's assumption that RCB's past success can be a catalyst for future wins ignores the possibility that other teams may have learned from RCB's strategies...",
+            "history": [
+                {
+                    "exchange": 1,
+                    "delta": -1,
+                    "score": -1,
+                    "view": "Furthermore, the Optimist's assumption that RCB's past success can be a catalyst for future wins ignores the possibility that other teams may have learned from RCB's strategies..."
+                },
+                {
+                    "exchange": 2,
+                    "delta": -1,
+                    "score": -2,
+                    "view": "Furthermore, the Optimist's assumption that RCB's past success can be a catalyst for future wins ignores the possibility that other teams may have learned from RCB's strategies..."
+                },
+                {
+                    "exchange": 3,
+                    "delta": -1,
+                    "score": -3,
+                    "view": "Furthermore, the Optimist's assumption that RCB's past success can be a catalyst for future wins ignores the possibility that other teams may have learned from RCB's strategies..."
+                },
+                {
+                    "exchange": 4,
+                    "delta": -1,
+                    "score": -4,
+                    "view": "Furthermore, the Optimist's assumption that RCB's past success can be a catalyst for future wins ignores the possibility that other teams may have learned from RCB's strategies..."
+                }
+            ]
+        }
     },
-    "last_response": ""
+    "last_response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99568, Requested 2572. Please try again in 30m48.959999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
 }

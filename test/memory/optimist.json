@@ -1,9 +1,139 @@
 {
-    "self_history": [],
+    "self_history": [
+        "I'm excited to build on the ideas presented by the Realist and Whatif_ambitious, as their perspectives have laid the groundwork for a fascinating discussion. The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as Whatif_ambitious suggested. By leveraging their experience and strategic investments, RCB can create a positive feedback loop that propels them to another championship win. I envision a scenario where RCB's management seizes this opportunity to not only win the IPL but also to establish a lasting legacy, inspiring their fans and paving the way for a new era of cricket excellence. With careful planning, innovative strategies, and a bit of luck, RCB can turn this possibility into a reality, and I'm eager to see how this story unfolds.",
+        "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99573, Requested 1457. Please try again in 14m49.92s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+        "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99570, Requested 2031. Please try again in 23m3.264s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+        "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99568, Requested 2405. Please try again in 28m24.672s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    ],
+    "exchange_snapshots": [
+        {
+            "exchange": 1,
+            "response": "I'm excited to build on the ideas presented by the Realist and Whatif_ambitious, as their perspectives have laid the groundwork for a fascinating discussion. The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as Whatif_ambitious suggested. By leveraging their experience and strategic investments, RCB can create a positive feedback loop that propels them to another championship win. I envision a scenario where RCB's management seizes this opportunity to not only win the IPL but also to establish a lasting legacy, inspiring their fans and paving the way for a new era of cricket excellence. With careful planning, innovative strategies, and a bit of luck, RCB can turn this possibility into a reality, and I'm eager to see how this story unfolds.",
+            "opinion_scores": {
+                "realist": 0,
+                "whatif_ambitious": 0,
+                "pessimist": 0
+            }
+        },
+        {
+            "exchange": 2,
+            "response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99573, Requested 1457. Please try again in 14m49.92s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+            "opinion_scores": {
+                "realist": -1,
+                "whatif_ambitious": -1,
+                "pessimist": -1
+            }
+        },
+        {
+            "exchange": 3,
+            "response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99570, Requested 2031. Please try again in 23m3.264s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+            "opinion_scores": {
+                "realist": -2,
+                "whatif_ambitious": -2,
+                "pessimist": -2
+            }
+        },
+        {
+            "exchange": 4,
+            "response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99568, Requested 2405. Please try again in 28m24.672s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+            "opinion_scores": {
+                "realist": -3,
+                "whatif_ambitious": -3,
+                "pessimist": -3
+            }
+        }
+    ],
     "opinions": {
-        "realist": 0,
-        "ambitious": 0,
-        "pessimist": 0
+        "realist": {
+            "score": -3,
+            "latest_view": "The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as What...",
+            "history": [
+                {
+                    "exchange": 1,
+                    "delta": 0,
+                    "score": 0,
+                    "view": "The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as What..."
+                },
+                {
+                    "exchange": 2,
+                    "delta": -1,
+                    "score": -1,
+                    "view": "The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as What..."
+                },
+                {
+                    "exchange": 3,
+                    "delta": -1,
+                    "score": -2,
+                    "view": "The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as What..."
+                },
+                {
+                    "exchange": 4,
+                    "delta": -1,
+                    "score": -3,
+                    "view": "The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as What..."
+                }
+            ]
+        },
+        "whatif_ambitious": {
+            "score": -3,
+            "latest_view": "The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as What...",
+            "history": [
+                {
+                    "exchange": 1,
+                    "delta": 0,
+                    "score": 0,
+                    "view": "The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as What..."
+                },
+                {
+                    "exchange": 2,
+                    "delta": -1,
+                    "score": -1,
+                    "view": "The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as What..."
+                },
+                {
+                    "exchange": 3,
+                    "delta": -1,
+                    "score": -2,
+                    "view": "The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as What..."
+                },
+                {
+                    "exchange": 4,
+                    "delta": -1,
+                    "score": -3,
+                    "view": "The Realist's point about considering the competitive landscape and team dynamics is well-taken, and I believe that RCB's past success can be a catalyst for future wins, as What..."
+                }
+            ]
+        },
+        "pessimist": {
+            "score": -3,
+            "latest_view": "",
+            "history": [
+                {
+                    "exchange": 1,
+                    "delta": 0,
+                    "score": 0,
+                    "view": ""
+                },
+                {
+                    "exchange": 2,
+                    "delta": -1,
+                    "score": -1,
+                    "view": ""
+                },
+                {
+                    "exchange": 3,
+                    "delta": -1,
+                    "score": -2,
+                    "view": ""
+                },
+                {
+                    "exchange": 4,
+                    "delta": -1,
+                    "score": -3,
+                    "view": ""
+                }
+            ]
+        }
     },
-    "last_response": ""
+    "last_response": "[ERROR]: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k1rnymhkf5m8sedyprvj2822` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99568, Requested 2405. Please try again in 28m24.672s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
 }

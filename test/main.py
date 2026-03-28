@@ -23,7 +23,7 @@ def main():
 
     print(f"\nSelected mode: {mode}\n")
 
-    query, context = get_user_context()
+    query, context = get_user_context(mode)
 
     agents = get_agents(mode)
 
@@ -31,10 +31,64 @@ def main():
 
     responses = {}
 
-    for agent in agents:
-        response = agent.respond(query, context)
-        responses[agent.name] = response
-        print(f"{agent.name.upper()}:\n{response}\n")
+    if mode in ["personal", "whatif"]:
+        total_exchanges = 4
+        response_history = {agent.name: [] for agent in agents}
+        round_transcript = []
+
+        council_context = {
+            "mode": mode,
+            "query": query,
+            "additional_info": context.get("additional_info", []),
+            "responses": {}
+        }
+
+        for exchange_number in range(1, total_exchanges + 1):
+            print(f"--- EXCHANGE {exchange_number}/{total_exchanges} ---\n")
+
+            for agent in agents:
+                council_context["responses"] = {
+                    agent_name: "\n".join(
+                        [
+                            f"Exchange {idx + 1}: {entry}"
+                            for idx, entry in enumerate(history)
+                        ]
+                    )
+                    for agent_name, history in response_history.items()
+                }
+
+                response = agent.respond(
+                    query,
+                    context,
+                    council_context,
+                    exchange_number=exchange_number,
+                    total_exchanges=total_exchanges
+                )
+
+                response_history[agent.name].append(response)
+                responses[agent.name] = response
+                round_transcript.append(
+                    {
+                        "exchange": exchange_number,
+                        "agent": agent.name,
+                        "response": response
+                    }
+                )
+
+                print(f"{agent.name.upper()}:\n{response}\n")
+
+        responses = {
+            "latest": responses,
+            "history": response_history,
+            "transcript": round_transcript,
+            "total_exchanges": total_exchanges,
+            "mode": mode
+        }
+    else:
+        for agent in agents:
+            response = agent.respond(query, context)
+            responses[agent.name] = response
+            print(f"{agent.name.upper()}:\n{response}\n")
 
     # 🔥 PERSONALIZED FINAL OUTPUT
     from personalizer.personalizer import generate_final_response

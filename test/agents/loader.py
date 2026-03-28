@@ -9,6 +9,7 @@ from .ambitious import AmbitiousAgent
 from .conservative import ConservativeAgent
 from .emotional import EmotionalAgent
 from .realist import RealistAgent
+from .whatif_ambitious import WhatIfAmbitiousAgent
 from .optimist import OptimistAgent
 from .pessimist import PessimistAgent
 
@@ -43,7 +44,7 @@ def get_agents(mode):
     elif mode == "whatif":
         return [
             RealistAgent(),
-            AmbitiousAgent(),
+            WhatIfAmbitiousAgent(),
             OptimistAgent(),
             PessimistAgent()
         ]
