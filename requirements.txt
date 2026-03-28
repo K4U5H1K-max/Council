@@ -1,0 +1,4 @@
+# Python dependencies for the full project (Node packages intentionally excluded)
+# Standard-library modules are not listed.
+
+python-dotenv>=1.0.0,<2.0.0

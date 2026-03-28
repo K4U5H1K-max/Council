@@ -4,15 +4,58 @@
 
 :root {
   color-scheme: light;
+  --color-maroon: #5A0015;
+  --color-maroon-accent: #850221;
+  --color-ivory: #fefaef;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply antialiased;
   margin: 0;
   min-height: 100vh;
+  font-size: 18px;
   font-family: "Segoe UI", "Avenir Next", "Helvetica Neue", sans-serif;
+  color: #2a171d;
+  background-color: var(--color-ivory);
   background-image:
-    radial-gradient(circle at 10% 10%, rgba(13, 148, 136, 0.12), transparent 30%),
-    radial-gradient(circle at 80% 20%, rgba(14, 116, 144, 0.1), transparent 25%),
-    radial-gradient(circle at 30% 80%, rgba(15, 118, 110, 0.1), transparent 30%);
+    radial-gradient(circle at 16% 12%, rgba(90, 0, 21, 0.12), transparent 30%),
+    radial-gradient(circle at 82% 18%, rgba(133, 2, 33, 0.09), transparent 25%),
+    radial-gradient(circle at 24% 82%, rgba(90, 0, 21, 0.08), transparent 28%);
+}
+
+.bg-ivory {
+  background-color: var(--color-ivory);
+}
+
+.bg-maroon {
+  background-color: var(--color-maroon);
+}
+
+.text-maroon {
+  color: var(--color-maroon);
+}
+
+.border-maroon {
+  border-color: var(--color-maroon);
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(226, 232, 240, 0.85) 0%, rgba(241, 245, 249, 1) 45%, rgba(226, 232, 240, 0.85) 100%);
+  background-size: 220% 100%;
+  animation: shimmer 1s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 180% 0;
+  }
+  100% {
+    background-position: -40% 0;
+  }
 }

@@ -1,28 +1,29 @@
+import { motion } from "framer-motion";
 import DecisionPanel from "./DecisionPanel";
-import TrustPanel from "./TrustPanel";
 
-function Page3Decision({ finalDecision, trustMatrix, onRestart }) {
+function Page3Decision({ finalDecision, onRestart }) {
   return (
-    <section className="w-full shrink-0 p-4 sm:p-6 lg:p-8 animate-floatIn">
-      <div className="space-y-5">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h2 className="text-2xl font-semibold text-slate-900">Final Output</h2>
-          <p className="mt-1 text-sm text-slate-600">
+    <section className="w-full shrink-0 p-6 sm:p-8 lg:p-10 animate-floatIn">
+      <div className="space-y-8">
+        <div className="rounded-3xl border border-maroon/25 bg-white p-7 shadow-panel ring-1 ring-maroon/10">
+          <h2 className="text-4xl font-bold text-maroon sm:text-5xl">Final Decision</h2>
+          <p className="mt-3 text-lg text-maroon/75">
             Consolidated decision and relationship memory after simulation.
           </p>
         </div>
 
         <DecisionPanel finalDecision={finalDecision} />
-        <TrustPanel trustMatrix={trustMatrix} />
 
         <div className="flex justify-end">
-          <button
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.02 }}
             onClick={onRestart}
-            className="rounded-xl border border-teal-600 px-5 py-2.5 text-sm font-semibold text-teal-700 transition hover:bg-teal-50"
+            className="rounded-2xl border border-maroon px-7 py-3.5 text-lg font-semibold text-maroon transition duration-300 hover:bg-maroon/5 hover:shadow-sm"
           >
             Restart
-          </button>
+          </motion.button>
         </div>
       </div>
     </section>

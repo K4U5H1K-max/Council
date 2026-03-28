@@ -1,20 +1,22 @@
 import { Children } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
-function MainContainer({ step, totalSteps, children }) {
-  const offset = (step * 100) / totalSteps;
+function MainContainer({ step, children }) {
+  const pages = Children.toArray(children);
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white/70 shadow-panel backdrop-blur">
-      <div
-        className="flex w-[300%] transition-transform duration-500 ease-in-out"
-        style={{ transform: `translateX(-${offset}%)` }}
-      >
-        {Children.map(children, (child, index) => (
-          <div key={index} className="w-1/3 shrink-0">
-            {child}
-          </div>
-        ))}
-      </div>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -16 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+        >
+          {pages[step]}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

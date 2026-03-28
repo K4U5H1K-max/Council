@@ -151,19 +151,32 @@ class BaseAgent:
         return lowered.startswith("[error]:") or "timed out" in lowered or "http 4" in lowered or "http 5" in lowered
 
     def determine_sentence_range(self, exchange_number, total_exchanges, has_prior_responses):
-        """Choose response length based on conversation stage and available context."""
+        """Choose concise response length while preserving reasoning quality."""
         if not has_prior_responses:
-            return 2, 3
+            return 2, 2
 
         if exchange_number >= total_exchanges:
-            return 3, 4
+            return 2, 3
 
-        return 3, 4
+        return 2, 3
+
+    @staticmethod
+    def _remove_exchange_markers(text):
+        if not isinstance(text, str):
+            return ""
+
+        cleaned = text.strip()
+        cleaned = re.sub(r"(?im)^\s*exchange\s*\d+\s*:\s*", "", cleaned)
+        cleaned = re.sub(r"(?i)\b(in|during)\s+exchange\s*\d+\b", "in this round", cleaned)
+        cleaned = re.sub(r"\s+", " ", cleaned)
+        return cleaned.strip()
 
     def enforce_response_quality(self, response, min_sentences=4, max_sentences=5):
-        """Normalize response length to a high-quality 4-5 sentence answer."""
+        """Normalize response length and clarity for concise, high-signal answers."""
         if self._is_error_response(response):
             return response.strip()
+
+        response = self._remove_exchange_markers(response)
 
         sentences = self._split_sentences(response)
         if min_sentences <= len(sentences) <= max_sentences:
@@ -177,7 +190,9 @@ Rules:
 - Output ONLY one paragraph.
 - Use exactly {min_sentences} to {max_sentences} sentences.
 - No bullet points.
+- Do NOT mention exchange numbers or round numbers.
 - Be specific, coherent, and persuasive.
+- Prefer concrete claim -> reason -> implication.
 - Avoid fluff, repetition, and abrupt fragments.
 
 Original response:
@@ -188,16 +203,16 @@ Original response:
         rewritten_sentences = self._split_sentences(rewritten)
 
         if min_sentences <= len(rewritten_sentences) <= max_sentences:
-            return rewritten.strip()
+            return self._remove_exchange_markers(rewritten).strip()
 
         # Deterministic fallback: keep the first max_sentences complete sentences.
         if rewritten_sentences:
-            return " ".join(rewritten_sentences[:max_sentences]).strip()
+            return self._remove_exchange_markers(" ".join(rewritten_sentences[:max_sentences])).strip()
 
         if sentences:
-            return " ".join(sentences[:max_sentences]).strip()
+            return self._remove_exchange_markers(" ".join(sentences[:max_sentences])).strip()
 
-        return response.strip()
+        return self._remove_exchange_markers(response).strip()
 
     @staticmethod
     def _peer_sentences(response, peer):
@@ -285,6 +300,8 @@ Original response:
         return memory
 
     def save_response_and_memory(self, memory, response, peer_names, exchange_number, peer_response_map=None):
+        response = self._remove_exchange_markers(response)
+
         if self._is_error_response(response):
             memory["last_response"] = response
             memory["exchange_snapshots"].append(

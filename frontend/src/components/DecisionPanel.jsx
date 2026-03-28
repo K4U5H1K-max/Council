@@ -1,21 +1,28 @@
+import { motion } from "framer-motion";
+
 function DecisionPanel({ finalDecision }) {
   return (
-    <section className="rounded-2xl border border-teal-200 bg-gradient-to-r from-teal-50 to-cyan-50 p-5 shadow-panel animate-floatIn">
-      <h2 className="text-lg font-semibold text-slate-900">Final Decision Panel</h2>
+    <motion.section
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.32 }}
+      className="rounded-3xl border border-maroon/35 bg-gradient-to-r from-rose-50 to-amber-50 p-8 shadow-panel ring-1 ring-maroon/25"
+    >
+      <h2 className="text-3xl font-bold text-maroon sm:text-4xl">Council Decision</h2>
 
-      <p className="mt-3 text-sm leading-relaxed text-slate-700">
+      <p className="mt-5 whitespace-pre-line text-lg leading-relaxed text-maroon/85">
         {finalDecision.text}
       </p>
 
-      <div className="mt-4 flex flex-wrap gap-3 text-xs sm:text-sm">
-        <span className="rounded-full bg-white px-3 py-1 font-medium text-slate-700">
-          Influencing Agent: {finalDecision.influencingAgent}
-        </span>
-        <span className="rounded-full bg-white px-3 py-1 font-medium text-slate-700">
-          Confidence: {Math.round(finalDecision.confidence * 100)}%
-        </span>
+      <div className="mt-7 rounded-2xl border border-maroon/25 bg-white/85 p-6">
+        <h3 className="text-xl font-semibold uppercase tracking-wide text-maroon">Key Insights</h3>
+        <ul className="mt-4 list-disc space-y-2 pl-6 text-lg text-maroon/85">
+          {(finalDecision.insights || []).map((insight) => (
+            <li key={insight}>{insight}</li>
+          ))}
+        </ul>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
