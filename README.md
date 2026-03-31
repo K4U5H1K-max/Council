@@ -38,8 +38,14 @@ source .venv/bin/activate
 
 4. Install Python dependencies:
 ```bash
-pip install python-dotenv
+pip install -r requirements.txt
 ```
+
+This installs all required packages including:
+- `python-dotenv` - Environment variable management
+- `langgraph` - Agentic workflow orchestration
+- `chromadb` - Vector database for semantic memory
+- `sentence-transformers` - Embeddings for semantic search
 
 5. Configure environment variables. Create a `.env` file in the test directory with your LLM API credentials:
 ```bash
@@ -111,7 +117,7 @@ npm run dev
 
 ### Optional: Preserve Agent Memory
 
-By default, agent memories reset at the start of each workflow run. To preserve memory across sessions:
+Agent memories use **Chroma vector database** for semantic search and persistence. By default, memories reset at the start of each workflow run. To preserve memory across sessions:
 
 ```bash
 export RESET_MEMORY_ON_START=0
@@ -121,7 +127,7 @@ python main.py       # for CLI mode
 python api_server.py # for API server
 ```
 
-This applies to both CLI and API server modes. Set `RESET_MEMORY_ON_START=1` to reset memories on the next run.
+Memory files are stored in `memory/chroma_db/` with automatic persistence. Set `RESET_MEMORY_ON_START=1` to reset memories on the next run. For more details on the vector memory system, see [CHROMA_INTEGRATION.md](test/CHROMA_INTEGRATION.md).
 
 ---
 
@@ -146,7 +152,7 @@ This setup uses free hosting for both frontend and backend with zero infrastruct
 4. Configure the service:
     - Name: `council-api`
     - Root Directory: `test`
-    - Build Command: (leave blank or `pip install python-dotenv`)
+    - Build Command: `pip install -r requirements.txt`
     - Start Command: `python api_server.py`
 5. Add environment variable:
     - Key: `OPENAI_API_KEY`
@@ -203,10 +209,14 @@ npm run dev
 
 ### Persistent Agent Memory in Production
 
-By default, agent memories persist across restarts within Render's filesystem. This means:
-- Agent memories are preserved between API calls (single deployment)
-- If the free-tier Render container restarts (happens after 15 minutes of inactivity), memories are retained
+Agent memories use **Chroma vector database** for intelligent persistence:
+- Memories persist across restarts within Render's filesystem
+- Chroma automatically indexes and persists all agent responses
+- Semantic search enables agents to retrieve contextually relevant past interactions
+- If the free-tier Render container restarts (after 15 minutes of inactivity), the Chroma database is retained
 - To reset all memories on next deployment, set `RESET_MEMORY_ON_START=1` in Render environment variables
+
+For production scaling, consider migrating to a managed vector database service (e.g., Pinecone, Weaviate) for improved reliability and multi-instance support.
 
 
 ## Architecture
@@ -215,10 +225,17 @@ By default, agent memories persist across restarts within Render's filesystem. T
 
 Council is a collaborative multi-agent system where diverse agent personalities work together to provide balanced decision-making support. The architecture consists of:
 
-- **Frontend**: React-based UI for interaction
-- **Backend**: Python multi-agent orchestration with persistent state
-- **Agent Council**: 8 distinct personalities with independent memory
+- **Frontend**: React-based UI for interaction (React 18, Vite, Tailwind CSS)
+- **Backend**: Python multi-agent orchestration with **LangGraph** workflow engine
+- **Agent Council**: 8 distinct personalities with independent semantic memory
 - **Personalizer**: Context-aware agent routing and questioning
+- **Memory System**: **Chroma vector database** with semantic search capabilities
+
+#### Key Innovation: Semantic Vector Memory
+
+Council now uses **Chroma vector database** with semantic embeddings to enable intelligent memory retrieval. Instead of simple keyword matching, agents automatically retrieve the **2 most contextually relevant past responses** from their memory using semantic similarity. This allows agents to build upon previous exchanges with genuine understanding of context.
+
+For detailed information, see [CHROMA_INTEGRATION.md](test/CHROMA_INTEGRATION.md).
 
 ### Agent Personalities
 
@@ -242,17 +259,21 @@ Routes user queries to appropriate agents based on interaction mode:
 
 #### Agent System (`agents/`)
 Each agent inherits from `BaseAgent`:
-- Maintains independent, persistent memory in JSON format
+- Maintains independent, persistent memory via **Chroma vector database**
 - Tracks conversation history and peer opinions
 - Generates responses through LLM integration
 - Participates in multi-exchange council deliberations
 
 #### Memory (`memory/`)
-Persistent state for each agent containing:
-- Conversation history
+**Chroma Vector Database** for semantic memory:
+- Stores agent responses with semantic embeddings
+- Automatic retrieval of 2 most relevant past responses per exchange via similarity search
 - Exchange snapshots capturing peer interactions
-- Opinion tracking (scores, sentiment, evolution)
-- Self-state and last response
+- Opinion tracking with scores and timestamps
+- Per-agent collections (e.g., `rational_memory`, `ambitious_memory`)
+- Auto-persisted to `memory/chroma_db/`
+
+See [CHROMA_INTEGRATION.md](test/CHROMA_INTEGRATION.md) for detailed vector memory documentation.
 
 #### LLM Integration (`llm/`)
 Unified interface to language model:
@@ -263,12 +284,14 @@ Unified interface to language model:
 ### Multi-Exchange Deliberation Flow
 
 1. **User Input**: Query and context gathered via personalizer
-2. **Council Initialization**: Relevant agents loaded with their memories
+2. **Council Initialization**: Chroma memory managers initialized for each agent
 3. **Exchanges (4 rounds)**:
-   - Each agent responds to the query with full council context
-   - Agents see previous round responses and adjust perspectives
+   - **Semantic Search**: Each agent retrieves 2 most relevant past responses from Chroma
+   - **Context Building**: Agent generates response informed by retrieved historical context
+   - **Memory Storage**: Response stored in Chroma with metadata for future retrieval
+   - **Shared Awareness**: Agents see previous round responses and adjust perspectives
    - Responses incorporated into shared deliberation history
-4. **Memory Update**: Each agent's memory updated with exchange outcome
+4. **Memory Persistence**: All agent memories persisted in Chroma vector database
 5. **Completion**: User receives comprehensive perspectives from all viewpoints
 
 ### Data Flow
@@ -298,10 +321,18 @@ User Input
 
 ### Persistence
 
-- Agent memories stored in `memory/*.json` files
-- Each agent maintains independent state between sessions
+- Agent memories stored in **Chroma vector database** (`memory/chroma_db/`)
+- Semantic embeddings enable intelligent retrieval of relevant past context
+- Each agent maintains independent collection with full conversation history
 - Optional memory reset on startup (controlled by `RESET_MEMORY_ON_START`)
-- No external database required - pure file-based persistence
+- Auto-persistence: changes saved immediately to database
+- Powered by `sentence-transformers` for semantic similarity matching
+
+**Benefits over file-based memory**:
+- Semantic search finds relevant context by meaning (not just exact matches)
+- Scales efficiently with large conversation histories
+- Automatic relevance ranking for retrieved memories
+- Timestamped opinions with scoring
 
 ---
 
@@ -327,12 +358,19 @@ Council/
 │   │   └── personalizer.py       # Context and routing logic
 │   ├── llm/                      # Language model integration
 │   │   └── client.py             # LLM API calls
-│   ├── memory/                   # Agent state persistence
-│   │   ├── rational.json
+│   ├── memory/                   # Agent state persistence (Chroma vector DB)
+│   │   ├── chroma_memory.py      # ChromaMemoryManager class
+│   │   ├── chroma_db/            # Vector database storage
+│   │   ├── rational.json         # Legacy (deprecated)
 │   │   ├── emotional.json
-│   │   └── ... (one per agent)
+│   │   └── ... (JSON files for compatibility)
 │   ├── utils/                    # Shared utilities
 │   │   └── helpers.py            # JSON/file helpers
+│   ├── evaluation/               # Metrics and evaluation
+│   │   ├── decision_metrics.py
+│   │   └── retrieval_metrics.py
+│   ├── langgraph_workflow.py     # LangGraph-based orchestration
+│   ├── _workflow_smoke.py        # Smoke tests
 │   └── .env                      # API credentials (local)
 │
 ├── frontend/                       # React UI

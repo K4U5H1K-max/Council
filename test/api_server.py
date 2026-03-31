@@ -6,6 +6,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from langgraph_workflow import run_council_workflow
 from agents.loader import get_agents
 from personalizer.personalizer import generate_follow_up_questions
 from personalizer.personalizer import generate_final_response
@@ -66,42 +67,6 @@ def validate_user_query(query):
     return True, ""
 
 
-def _reset_agent_memories(agents):
-    """Reset per-agent memory files so each run starts as a fresh conversation."""
-    for agent in agents:
-        memory_path = Path(getattr(agent, "memory_file", ""))
-        if not memory_path:
-            continue
-
-        try:
-            if not memory_path.exists():
-                continue
-
-            with open(memory_path, "r", encoding="utf-8") as f:
-                memory = json.load(f)
-
-            if not isinstance(memory, dict):
-                continue
-
-            memory["self_history"] = []
-            memory["exchange_snapshots"] = []
-            memory["last_response"] = ""
-
-            opinions = memory.get("opinions", {})
-            if isinstance(opinions, dict):
-                for _, peer_data in opinions.items():
-                    if isinstance(peer_data, dict):
-                        peer_data["score"] = 0
-                        peer_data["latest_view"] = ""
-                        peer_data["history"] = []
-
-            with open(memory_path, "w", encoding="utf-8") as f:
-                json.dump(memory, f, indent=4)
-        except Exception:
-            # Non-fatal for request processing.
-            continue
-
-
 def _normalize_additional_info(additional_info):
     if not isinstance(additional_info, list):
         return []
@@ -124,92 +89,40 @@ def _format_agent_label(raw_name):
 
 
 def run_workflow(mode, query, additional_info):
-    agents = get_agents(mode)
-
-    if os.getenv("RESET_MEMORY_ON_START", "1").strip() == "1":
-        _reset_agent_memories(agents)
-
-    context = {
-        "mode": mode,
-        "query": query,
-        "additional_info": _normalize_additional_info(additional_info),
-    }
-
-    total_exchanges = 4
-    response_history = {agent.name: [] for agent in agents}
-    round_transcript = []
-    latest_responses = {}
-
-    council_context = {
-        "mode": mode,
-        "query": query,
-        "additional_info": context.get("additional_info", []),
-        "responses": {},
-    }
-
-    for exchange_number in range(1, total_exchanges + 1):
-        for agent in agents:
-            council_context["responses"] = {
-                agent_name: "\n".join(history)
-                for agent_name, history in response_history.items()
-            }
-
-            response = agent.respond(
-                query,
-                context,
-                council_context,
-                exchange_number=exchange_number,
-                total_exchanges=total_exchanges,
-            )
-
-            response_history[agent.name].append(response)
-            latest_responses[agent.name] = response
-            round_transcript.append(
-                {
-                    "exchange": exchange_number,
-                    "agent": agent.name,
-                    "agent_display": _format_agent_label(agent.name),
-                    "response": response,
-                }
-            )
-
-    structured_responses = {
-        "latest": latest_responses,
-        "history": response_history,
-        "transcript": round_transcript,
-        "total_exchanges": total_exchanges,
-        "mode": mode,
-    }
-
-    final_text = generate_final_response(context, structured_responses)
-
-    debate = []
-    for agent_name, rounds in response_history.items():
-        if not rounds:
-            continue
-        if mode == "whatif" and agent_name == "pessimist":
-            continue
-        debate.append(
-            {
-                "id": f"D-{agent_name}",
-                "agent": _format_agent_label(agent_name),
-                "text": rounds[-1],
-            }
-        )
-
+    """Run the council workflow using LangGraph orchestration."""
+    reset_memory = os.getenv("RESET_MEMORY_ON_START", "1").strip() == "1"
+    additional_info = _normalize_additional_info(additional_info)
+    
+    # Execute the LangGraph workflow
+    workflow_result = run_council_workflow(
+        mode=mode,
+        query=query,
+        additional_info=additional_info,
+        total_exchanges=4,
+        reset_memory=reset_memory
+    )
+    
+    # Extract and format response for API compatibility
+    context = workflow_result.context
+    conversation = workflow_result.conversation
+    debate = workflow_result.debate
+    final = workflow_result.final
+    
+    # Format agent labels in debate
+    formatted_debate = []
+    for item in debate:
+        formatted_item = item.copy()
+        if "agent" in formatted_item and isinstance(formatted_item["agent"], str):
+            formatted_item["agent"] = _format_agent_label(formatted_item["agent"])
+        formatted_debate.append(formatted_item)
+    
     return {
         "mode": mode,
         "query": query,
         "context": context,
-        "conversation": structured_responses,
-        "debate": debate[:4],
-        "final": {
-            "text": final_text,
-            "insights": [
-                "Decision generated from full 4-round council transcript.",
-                "Agent memory and peer-opinion updates were applied per exchange.",
-            ],
-        },
+        "conversation": conversation,
+        "debate": formatted_debate[:4],
+        "final": final,
     }
 
 
