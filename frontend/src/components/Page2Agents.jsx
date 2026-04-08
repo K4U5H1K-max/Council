@@ -22,7 +22,7 @@ function Page2Agents({
         <div className="rounded-3xl border border-maroon/20 bg-white p-6 shadow-sm">
           <h2 className="text-3xl font-bold text-maroon">Agent Interaction</h2>
           <p className="mt-2 text-lg text-maroon/75">
-            Proposals and critiques evolve through collaborative disagreement.
+            Evaluator questions and Pro/Con defenses run through 3 structured rounds.
           </p>
 
           <motion.p
@@ -35,7 +35,7 @@ function Page2Agents({
             Mode: {modeLabel}
           </motion.p>
 
-          <p className="mt-3 text-base text-maroon/65">Thinking mode selected by user.</p>
+          <p className="mt-3 text-base text-maroon/65">Single debate mode with round-by-round reasoning.</p>
 
           {isLoading ? (
             <p className="mt-4 text-lg font-medium text-maroon/85">Agents are thinking...</p>
@@ -58,9 +58,9 @@ function Page2Agents({
             onClick={() => setShowDebate((previous) => !previous)}
             className="rounded-2xl border border-maroon/25 bg-white px-6 py-3 text-base font-semibold text-maroon transition duration-300 hover:bg-maroon/5"
           >
-            {showDebate ? "Hide Consensus" : "Show Consensus"}
+            {showDebate ? "Hide Debate Summary" : "Show Debate Summary"}
           </motion.button>
-          <p className="text-base text-maroon/65">Minimal view of key disagreements</p>
+          <p className="text-base text-maroon/65">Latest Pro, Con, and Evaluator final insight</p>
         </div>
 
         {showDebate ? <DebatePanel messages={critiqueMessages} isLoading={isLoading} /> : null}

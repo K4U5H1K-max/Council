@@ -2,105 +2,22 @@ import { useCallback, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import LandingContainer from "./components/LandingContainer";
 import StepIndicator from "./components/StepIndicator";
-import PersonalizerDialog from "./components/PersonalizerDialog";
 import Page2Agents from "./components/Page2Agents";
 import Page3Decision from "./components/Page3Decision";
 import { agentConfigs } from "./config/agentConfigs";
 
-// Build API candidates from environment variable or defaults
-const getApiCandidates = () => {
-  const envApiUrl = import.meta.env.VITE_API_BASE_URL?.trim();
-  if (envApiUrl) {
-    return [envApiUrl + "/api"];
-  }
-  // Fallback: try localhost first, then relative path
-  return [
-    "http://127.0.0.1:8000/api",
-    "/api",
-  ];
-};
-
-const API_CANDIDATES = getApiCandidates();
-
-const IRRELEVANT_OPERATION_PATTERNS = [
-  /\bwrite\s+code\b/i,
-  /\bbuild\s+(an\s+)?app\b/i,
-  /\bcreate\s+(a\s+)?website\b/i,
-  /\bdebug\s+(my\s+)?code\b/i,
-  /\bfix\s+(the\s+)?bug\b/i,
-  /\brun\s+(a\s+)?command\b/i,
-  /\bopen\s+(the\s+)?browser\b/i,
-  /\bsend\s+(an\s+)?email\b/i,
-  /\bdownload\s+(a\s+)?file\b/i,
-];
-
-const DECISION_CONTEXT_HINTS = [
-  " i ",
-  " my ",
-  " me ",
-  "learn",
-  "study",
-  "career",
-  "relationship",
-  "health",
-  "goal",
-  "habit",
-  "decision",
-  "choose",
-  "plan",
-  "strategy",
-  "what if",
-  "should",
+const API_CANDIDATES = [
+  "http://127.0.0.1:8000/api",
+  "/api",
 ];
 
 const validateUserPrompt = (query) => {
   const text = String(query || "").trim();
   if (!text) {
-    return "Please enter a scenario or question.";
-  }
-
-  const lowered = ` ${text.toLowerCase()} `;
-  const isOperational = IRRELEVANT_OPERATION_PATTERNS.some((pattern) => pattern.test(lowered));
-  const hasDecisionContext = DECISION_CONTEXT_HINTS.some((hint) => lowered.includes(hint));
-
-  if (isOperational && !hasDecisionContext) {
-    return "This looks like an operational task request. Please rephrase it as a scenario or decision you want guidance on.";
+    return "Please enter a debate topic or question.";
   }
 
   return "";
-};
-
-const fetchPersonalizerQuestions = async (mode, query) => {
-  let lastError = null;
-
-  for (const base of API_CANDIDATES) {
-    try {
-      const response = await fetch(`${base}/personalizer/questions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode, query }),
-      });
-
-      if (!response.ok) {
-        let errorText = `HTTP ${response.status}`;
-        try {
-          const errorPayload = await response.json();
-          if (typeof errorPayload?.error === "string" && errorPayload.error.trim()) {
-            errorText = errorPayload.error;
-          }
-        } catch {
-          // Keep fallback status message when JSON parsing fails.
-        }
-        throw new Error(errorText);
-      }
-
-      return await response.json();
-    } catch (error) {
-      lastError = error;
-    }
-  }
-
-  throw lastError || new Error("Failed to fetch personalizer questions");
 };
 
 const fetchWorkflowRun = async (mode, query, additionalInfo = []) => {
@@ -133,7 +50,7 @@ const fetchWorkflowRun = async (mode, query, additionalInfo = []) => {
     }
   }
 
-  throw lastError || new Error("Failed to run council workflow");
+  throw lastError || new Error("Failed to run debate workflow");
 };
 
 const mapTranscriptToChatAgents = (transcript, useCase) => {
@@ -191,20 +108,10 @@ const mapHistoryToChatAgents = (history, useCase) => {
 
 function App() {
   const [currentStep, setCurrentStep] = useState(0); // 0=input, 1=agents, 2=decision
-  const [mode, setMode] = useState("practical");
   const [inputData, setInputData] = useState("");
-  const [personalContext, setPersonalContext] = useState({ q1: "", q2: "" });
-  const [personalizerQuestions, setPersonalizerQuestions] = useState([
-    "What outcome matters most right now?",
-    "What constraint should we avoid?",
-  ]);
-  const [personalizerMessage, setPersonalizerMessage] = useState(
-    "A short profile helps tune the council response."
-  );
-  const [showPersonalizer, setShowPersonalizer] = useState(false);
 
-  const useCase = mode === "practical" ? "personal" : "scenario";
-  const modeLabel = mode === "practical" ? "Practical" : "Creative";
+  const useCase = "debate";
+  const modeLabel = "Debate";
 
   const [agentResponses, setAgentResponses] = useState([]);
   const [critiqueMessages, setCritiqueMessages] = useState([]);
@@ -228,23 +135,15 @@ function App() {
     setHasPlayedAgentChat(false);
   };
 
-  const runSimulation = async (nextContext) => {
+  const runSimulation = async () => {
     if (isLoading) return;
     setIsLoading(true);
     setWorkflowError("");
 
     try {
-      const modeValue = useCase === "personal" ? "personal" : "whatif";
       const additionalInfo = [];
 
-      if (nextContext?.q1?.trim()) {
-        additionalInfo.push({ question: "q1", answer: nextContext.q1.trim() });
-      }
-      if (nextContext?.q2?.trim()) {
-        additionalInfo.push({ question: "q2", answer: nextContext.q2.trim() });
-      }
-
-      const payload = await fetchWorkflowRun(modeValue, inputData.trim(), additionalInfo);
+      const payload = await fetchWorkflowRun("debate", inputData.trim(), additionalInfo);
       const transcript = payload?.conversation?.transcript || [];
       const history = payload?.conversation?.history || {};
       const chatAgents = transcript.length > 0
@@ -270,7 +169,7 @@ function App() {
         },
       ]);
       setFinalDecision({
-        text: `Unable to generate council output right now. ${message}`,
+        text: `Unable to generate debate output right now. ${message}`,
         influencingAgent: "System",
         confidence: 0,
         insights: [
@@ -284,20 +183,14 @@ function App() {
     }
   };
 
-  const ensurePipelineData = (context) => {
+  const ensurePipelineData = () => {
     if (agentResponses.length === 0) {
-      runSimulation(context);
+      runSimulation();
       return;
     }
   };
 
-  const requiredAnswers = Math.max(1, Math.min(2, personalizerQuestions.length || 0));
-  const canOpenAgents =
-    mode === "creative"
-      ? Boolean(inputData.trim())
-      : requiredAnswers === 1
-        ? Boolean(inputData.trim() && personalContext.q1?.trim())
-        : Boolean(inputData.trim() && personalContext.q1?.trim() && personalContext.q2?.trim());
+  const canOpenAgents = Boolean(inputData.trim());
   const canOpenDecision = canOpenAgents && agentResponses.length > 0;
 
   const handleStepNavigation = (targetStep) => {
@@ -309,7 +202,7 @@ function App() {
     if (targetStep === 1) {
       if (!canOpenAgents) return;
       setCurrentStep(1);
-      ensurePipelineData(personalContext);
+      ensurePipelineData();
       return;
     }
 
@@ -326,54 +219,13 @@ function App() {
     const guardrailError = validateUserPrompt(inputData);
     if (guardrailError) {
       setInputGuardrailError(guardrailError);
-      setShowPersonalizer(false);
       setCurrentStep(0);
       return;
     }
 
     setInputGuardrailError("");
-
-    const modeValue = mode === "practical" ? "personal" : "whatif";
-
-    if (modeValue === "whatif") {
-      setShowPersonalizer(false);
-      setCurrentStep(1);
-      runSimulation({ q1: "", q2: "" });
-      return;
-    }
-
-    try {
-      const payload = await fetchPersonalizerQuestions(modeValue, inputData.trim());
-      const questions = Array.isArray(payload.questions) ? payload.questions.slice(0, 2) : [];
-
-      setPersonalizerQuestions(
-        questions.length > 0
-          ? questions
-          : ["Any additional details you want the council to consider?"]
-      );
-      setPersonalizerMessage(
-        payload.message || "A short profile helps tune the council response."
-      );
-    } catch (error) {
-      setPersonalizerQuestions([
-        "What outcome matters most right now?",
-        "What constraint should we avoid?",
-      ]);
-      setPersonalizerMessage(
-        "Backend question service is unavailable. Showing default prompts."
-      );
-    }
-
-    setShowPersonalizer(true);
-  };
-
-  const handleContinueFromPersonalizer = () => {
-    if (!personalContext.q1?.trim()) return;
-    if (personalizerQuestions.length > 1 && !personalContext.q2?.trim()) return;
-    const nextContext = { q1: personalContext.q1, q2: personalContext.q2 };
-    setShowPersonalizer(false);
     setCurrentStep(1);
-    runSimulation(nextContext);
+    runSimulation();
   };
 
   const handleNextFromAgents = () => {
@@ -384,13 +236,6 @@ function App() {
   const handleRestart = () => {
     setCurrentStep(0);
     setInputData("");
-    setPersonalContext({ q1: "", q2: "" });
-    setPersonalizerQuestions([
-      "What outcome matters most right now?",
-      "What constraint should we avoid?",
-    ]);
-    setPersonalizerMessage("A short profile helps tune the council response.");
-    setShowPersonalizer(false);
     invalidateComputedStages();
     setIsLoading(false);
   };
@@ -400,23 +245,6 @@ function App() {
     if (inputGuardrailError) {
       setInputGuardrailError("");
     }
-    invalidateComputedStages();
-  };
-
-  const handleModeChange = (nextMode) => {
-    setMode(nextMode);
-    setShowPersonalizer(false);
-    setPersonalContext({ q1: "", q2: "" });
-    setPersonalizerQuestions([
-      "What outcome matters most right now?",
-      "What constraint should we avoid?",
-    ]);
-    setPersonalizerMessage("A short profile helps tune the council response.");
-    invalidateComputedStages();
-  };
-
-  const handlePersonalContextChange = (key, value) => {
-    setPersonalContext((previous) => ({ ...previous, [key]: value }));
     invalidateComputedStages();
   };
 
@@ -460,26 +288,12 @@ function App() {
               className="w-full"
             >
               <LandingContainer
-                mode={mode}
-                onModeChange={handleModeChange}
                 userInput={inputData}
                 onInputChange={handleInputChange}
                 onSubmit={handleInputSubmit}
-                submitted={showPersonalizer}
+                submitted={canOpenAgents}
                 isReadOnly={isOutputLocked}
               />
-
-              {showPersonalizer ? (
-                <PersonalizerDialog
-                  q1Answer={personalContext.q1 || ""}
-                  q2Answer={personalContext.q2 || ""}
-                  questions={personalizerQuestions}
-                  message={personalizerMessage}
-                  onQ1Change={(value) => handlePersonalContextChange("q1", value)}
-                  onQ2Change={(value) => handlePersonalContextChange("q2", value)}
-                  onContinue={handleContinueFromPersonalizer}
-                />
-              ) : null}
             </motion.div>
           ) : currentStep === 1 ? (
             <motion.div

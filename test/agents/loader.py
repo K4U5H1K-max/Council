@@ -1,52 +1,15 @@
-"""
-Agent loading and configuration module.
+"""Agent loading for the Battle of the Bots workflow."""
 
-Provides dynamic agent selection based on interaction mode.
-"""
-
-from .rational import RationalAgent
-from .ambitious import AmbitiousAgent
-from .conservative import ConservativeAgent
-from .emotional import EmotionalAgent
-from .realist import RealistAgent
-from .whatif_ambitious import WhatIfAmbitiousAgent
-from .optimist import OptimistAgent
-from .pessimist import PessimistAgent
+from .debate_agent import DebateAgent
 
 
-def get_agents(mode):
-    """
-    Return the appropriate list of agents based on the selected mode.
+def get_agents(mode="debate"):
+    """Return the three role-based agents used in the debate pipeline."""
+    if mode not in ("debate", "personal", "whatif"):
+        raise ValueError(f"Unknown mode: {mode}. Must be 'debate', 'personal', or 'whatif'.")
 
-    Args:
-        mode (str): The interaction mode ("personal" or "whatif")
-
-    Returns:
-        list: A list of agent objects initialized for the given mode
-
-    Raises:
-        ValueError: If mode is not recognized
-
-    Example:
-        agents = get_agents("personal")
-        # Returns: [RationalAgent(), AmbitiousAgent(), ConservativeAgent(), EmotionalAgent()]
-
-        agents = get_agents("whatif")
-        # Returns: [RealistAgent(), AmbitiousAgent(), OptimistAgent(), PessimistAgent()]
-    """
-    if mode == "personal":
-        return [
-            RationalAgent(),
-            AmbitiousAgent(),
-            ConservativeAgent(),
-            EmotionalAgent()
-        ]
-    elif mode == "whatif":
-        return [
-            RealistAgent(),
-            WhatIfAmbitiousAgent(),
-            OptimistAgent(),
-            PessimistAgent()
-        ]
-    else:
-        raise ValueError(f"Unknown mode: {mode}. Must be 'personal' or 'whatif'.")
+    return [
+        DebateAgent(name="pro", role="PRO"),
+        DebateAgent(name="con", role="CON"),
+        DebateAgent(name="evaluator", role="EVALUATOR"),
+    ]

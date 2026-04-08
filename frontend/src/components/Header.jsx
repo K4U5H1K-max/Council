@@ -9,10 +9,10 @@ function Header() {
       className="text-center"
     >
       <h1 className="text-5xl font-extrabold tracking-tight text-maroon sm:text-6xl lg:text-7xl">
-        Council of Agents
+        Battle of the Bots
       </h1>
       <p className="mt-4 text-lg text-maroon/80 sm:text-xl">
-        Multi-Agent Decision Intelligence System
+        Pro vs Con with Evaluator-led 3-round debate
       </p>
     </motion.header>
   );

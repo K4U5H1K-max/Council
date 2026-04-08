@@ -8,7 +8,7 @@ function Page3Decision({ finalDecision, onRestart }) {
         <div className="rounded-3xl border border-maroon/25 bg-white p-7 shadow-panel ring-1 ring-maroon/10">
           <h2 className="text-4xl font-bold text-maroon sm:text-5xl">Final Decision</h2>
           <p className="mt-3 text-lg text-maroon/75">
-            Consolidated decision and relationship memory after simulation.
+            Evaluator's complete judgement after all 3 rounds of debate.
           </p>
         </div>
 

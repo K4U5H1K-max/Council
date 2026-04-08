@@ -1,72 +1,33 @@
 export const useCaseOptions = [
-  { value: "personal", label: "Practical — Personal Consult" },
-  { value: "scenario", label: "Creative — What If Scenario" },
+  { value: "debate", label: "Battle of the Bots" },
 ];
 
 export const useCaseLabels = {
-  personal: "Practical — Personal Consult",
-  scenario: "Creative — What If Scenario",
+  debate: "Battle of the Bots",
 };
 
 export const agentConfigs = {
-  personal: [
+  debate: [
     {
-      name: "Rational",
-      traits: ["Logical", "Risk-aware"],
+      name: "Pro Agent",
+      traits: ["Supportive", "Persuasive"],
       color: "blue",
-      icon: "R",
-      tooltip: "Prioritizes evidence, structure, and clear trade-offs.",
-    },
-    {
-      name: "Ambitious",
-      traits: ["Growth-driven", "Aggressive"],
-      color: "red",
-      icon: "A",
-      tooltip: "Pushes for upside and speed, even with higher uncertainty.",
-    },
-    {
-      name: "Conservative",
-      traits: ["Safe", "Stable"],
-      color: "green",
-      icon: "C",
-      tooltip: "Protects downside and prefers gradual, resilient progress.",
-    },
-    {
-      name: "Emotional",
-      traits: ["Empathetic", "Intuitive"],
-      color: "pink",
-      icon: "E",
-      tooltip: "Centers people impact, values, and human consequences.",
-    },
-  ],
-  scenario: [
-    {
-      name: "Realist",
-      traits: ["Practical", "Grounded"],
-      color: "gray",
-      icon: "R",
-      tooltip: "Keeps recommendations realistic and execution-aware.",
-    },
-    {
-      name: "Ambitious",
-      traits: ["Expansion-focused", "Bold"],
-      color: "red",
-      icon: "A",
-      tooltip: "Looks for leverage and breakthrough opportunities.",
-    },
-    {
-      name: "Optimist",
-      traits: ["Positive", "Hopeful"],
-      color: "yellow",
-      icon: "O",
-      tooltip: "Highlights upside potential and momentum effects.",
-    },
-    {
-      name: "Pessimist",
-      traits: ["Critical", "Risk-focused"],
-      color: "purple",
       icon: "P",
-      tooltip: "Stress-tests assumptions and surfaces hidden failure modes.",
+      tooltip: "Argues in favor of the topic with structured supporting points.",
+    },
+    {
+      name: "Con Agent",
+      traits: ["Critical", "Analytical"],
+      color: "red",
+      icon: "C",
+      tooltip: "Argues against the topic with counterarguments and trade-offs.",
+    },
+    {
+      name: "Evaluator Agent",
+      traits: ["Objective", "Comparative"],
+      color: "gray",
+      icon: "E",
+      tooltip: "Questions both sides each round and issues final judgement.",
     },
   ],
 };

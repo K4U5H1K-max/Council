@@ -1,50 +1,14 @@
 import json
-import os
-import re
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
 from dotenv import load_dotenv
 
-from agents.loader import get_agents
-from personalizer.personalizer import generate_follow_up_questions
-from personalizer.personalizer import generate_final_response
+from debate_engine import run_debate
 
 
 ENV_PATH = Path(__file__).resolve().parent / ".env"
 load_dotenv(dotenv_path=ENV_PATH, override=True)
-
-
-IRRELEVANT_OPERATION_PATTERNS = (
-    r"\bwrite\s+code\b",
-    r"\bbuild\s+(an\s+)?app\b",
-    r"\bcreate\s+(a\s+)?website\b",
-    r"\bdebug\s+(my\s+)?code\b",
-    r"\bfix\s+(the\s+)?bug\b",
-    r"\brun\s+(a\s+)?command\b",
-    r"\bopen\s+(the\s+)?browser\b",
-    r"\bsend\s+(an\s+)?email\b",
-    r"\bdownload\s+(a\s+)?file\b",
-)
-
-DECISION_CONTEXT_HINTS = (
-    " i ",
-    " my ",
-    " me ",
-    "learn",
-    "study",
-    "career",
-    "relationship",
-    "health",
-    "goal",
-    "habit",
-    "decision",
-    "choose",
-    "plan",
-    "strategy",
-    "what if",
-    "should",
-)
 
 
 def validate_user_query(query):
@@ -52,54 +16,94 @@ def validate_user_query(query):
     if not text:
         return False, "Please enter a scenario or question."
 
-    lowered = f" {text.lower()} "
-    is_operational = any(re.search(pattern, lowered) for pattern in IRRELEVANT_OPERATION_PATTERNS)
-    has_decision_context = any(hint in lowered for hint in DECISION_CONTEXT_HINTS)
-
-    if is_operational and not has_decision_context:
-        return (
-            False,
-            "This looks like an operational task request. Please rephrase it as a scenario or decision "
-            "you want guidance on."
-        )
-
     return True, ""
 
 
-def _reset_agent_memories(agents):
-    """Reset per-agent memory files so each run starts as a fresh conversation."""
-    for agent in agents:
-        memory_path = Path(getattr(agent, "memory_file", ""))
-        if not memory_path:
+def _parse_final_evaluation(judge_text):
+    """Extract structured analysis from evaluator's final response."""
+    if not isinstance(judge_text, str):
+        return {
+            "summary": "",
+            "pro_analysis": "",
+            "con_analysis": "",
+            "critical_factors": "",
+            "winner": "Draw",
+            "reasoning": "",
+        }
+
+    lines = judge_text.split("\n")
+    sections = {
+        "summary": "",
+        "pro_analysis": "",
+        "con_analysis": "",
+        "critical_factors": "",
+        "winner": "Draw",
+        "reasoning": "",
+    }
+
+    current_section = None
+    content_buffer = []
+
+    key_map = {
+        "summary:": "summary",
+        "pro_analysis:": "pro_analysis",
+        "pro strengths & weaknesses:": "pro_analysis",
+        "con_analysis:": "con_analysis",
+        "con strengths & weaknesses:": "con_analysis",
+        "critical_factors:": "critical_factors",
+        "critical factors:": "critical_factors",
+        "reasoning:": "reasoning",
+    }
+
+    for line in lines:
+        lower = line.lower().strip()
+
+        if not lower:
             continue
 
-        try:
-            if not memory_path.exists():
-                continue
-
-            with open(memory_path, "r", encoding="utf-8") as f:
-                memory = json.load(f)
-
-            if not isinstance(memory, dict):
-                continue
-
-            memory["self_history"] = []
-            memory["exchange_snapshots"] = []
-            memory["last_response"] = ""
-
-            opinions = memory.get("opinions", {})
-            if isinstance(opinions, dict):
-                for _, peer_data in opinions.items():
-                    if isinstance(peer_data, dict):
-                        peer_data["score"] = 0
-                        peer_data["latest_view"] = ""
-                        peer_data["history"] = []
-
-            with open(memory_path, "w", encoding="utf-8") as f:
-                json.dump(memory, f, indent=4)
-        except Exception:
-            # Non-fatal for request processing.
+        if lower.startswith("winner:"):
+            if current_section and content_buffer:
+                sections[current_section] = "\n".join(content_buffer).strip()
+            winner_text = line.split(":", 1)[1].strip() if ":" in line else ""
+            if winner_text.lower().startswith("pro"):
+                sections["winner"] = "Pro"
+            elif winner_text.lower().startswith("con"):
+                sections["winner"] = "Con"
+            else:
+                sections["winner"] = "Draw"
+            current_section = None
+            content_buffer = []
             continue
+
+        matched_section = None
+        for prefix, mapped in key_map.items():
+            if lower.startswith(prefix):
+                matched_section = mapped
+                break
+
+        if matched_section:
+            if current_section and content_buffer:
+                sections[current_section] = "\n".join(content_buffer).strip()
+            current_section = matched_section
+            content_buffer = [line.split(":", 1)[1].strip()] if ":" in line else []
+            continue
+
+        if line.strip():
+            if current_section:
+                content_buffer.append(line)
+
+    # Flush remaining buffer
+    if current_section and content_buffer:
+        sections[current_section] = "\n".join(content_buffer).strip()
+
+    if not sections["summary"]:
+        compact = " ".join([part.strip() for part in judge_text.splitlines() if part.strip()])
+        sections["summary"] = compact[:280]
+
+    if not sections["reasoning"]:
+        sections["reasoning"] = "Decision based on comparative strength, consistency, and evidence quality across all rounds."
+
+    return sections
 
 
 def _normalize_additional_info(additional_info):
@@ -117,97 +121,78 @@ def _normalize_additional_info(additional_info):
     return normalized
 
 
-def _format_agent_label(raw_name):
-    if raw_name == "whatif_ambitious":
-        return "Ambitious"
-    return str(raw_name).replace("_", " ").title()
-
-
 def run_workflow(mode, query, additional_info):
-    agents = get_agents(mode)
+    del mode
+    normalized_info = _normalize_additional_info(additional_info)
+    debate_result = run_debate(query, additional_info=normalized_info)
+    state = debate_result["state"]
+    transcript = debate_result["transcript"]
 
-    if os.getenv("RESET_MEMORY_ON_START", "1").strip() == "1":
-        _reset_agent_memories(agents)
-
-    context = {
-        "mode": mode,
-        "query": query,
-        "additional_info": _normalize_additional_info(additional_info),
+    response_history = {
+        "pro": [entry.get("pro_response", "") for entry in state.get("rounds", [])],
+        "con": [entry.get("con_response", "") for entry in state.get("rounds", [])],
+        "evaluator": [
+            entry.get("evaluator_question", "") for entry in state.get("rounds", [])
+        ] + [state.get("judge_result", "")],
     }
 
-    total_exchanges = 4
-    response_history = {agent.name: [] for agent in agents}
-    round_transcript = []
-    latest_responses = {}
-
-    council_context = {
-        "mode": mode,
-        "query": query,
-        "additional_info": context.get("additional_info", []),
-        "responses": {},
+    latest_responses = {
+        "pro": state.get("pro_response", ""),
+        "con": state.get("con_response", ""),
+        "evaluator": state.get("judge_result", ""),
     }
-
-    for exchange_number in range(1, total_exchanges + 1):
-        for agent in agents:
-            council_context["responses"] = {
-                agent_name: "\n".join(history)
-                for agent_name, history in response_history.items()
-            }
-
-            response = agent.respond(
-                query,
-                context,
-                council_context,
-                exchange_number=exchange_number,
-                total_exchanges=total_exchanges,
-            )
-
-            response_history[agent.name].append(response)
-            latest_responses[agent.name] = response
-            round_transcript.append(
-                {
-                    "exchange": exchange_number,
-                    "agent": agent.name,
-                    "agent_display": _format_agent_label(agent.name),
-                    "response": response,
-                }
-            )
 
     structured_responses = {
         "latest": latest_responses,
         "history": response_history,
-        "transcript": round_transcript,
-        "total_exchanges": total_exchanges,
-        "mode": mode,
+        "transcript": transcript,
+        "total_exchanges": len(state.get("rounds", [])),
+        "mode": "debate",
     }
 
-    final_text = generate_final_response(context, structured_responses)
+    debate_cards = [
+        {
+            "id": "D-pro",
+            "agent": "Pro Agent",
+            "text": state.get("pro_response", ""),
+        },
+        {
+            "id": "D-con",
+            "agent": "Con Agent",
+            "text": state.get("con_response", ""),
+        },
+        {
+            "id": "D-evaluator",
+            "agent": "Evaluator Agent",
+            "text": state.get("judge_result", ""),
+        },
+    ]
 
-    debate = []
-    for agent_name, rounds in response_history.items():
-        if not rounds:
-            continue
-        if mode == "whatif" and agent_name == "pessimist":
-            continue
-        debate.append(
-            {
-                "id": f"D-{agent_name}",
-                "agent": _format_agent_label(agent_name),
-                "text": rounds[-1],
-            }
-        )
+    # Parse evaluator's detailed analysis
+    analysis = _parse_final_evaluation(state.get("judge_result", ""))
 
     return {
-        "mode": mode,
+        "mode": "debate",
         "query": query,
-        "context": context,
+        "context": {
+            "mode": "debate",
+            "query": query,
+            "additional_info": normalized_info,
+        },
+        "state": state,
         "conversation": structured_responses,
-        "debate": debate[:4],
+        "debate": debate_cards,
         "final": {
-            "text": final_text,
+            "text": state.get("judge_result", ""),
+            "winner": analysis["winner"],
+            "summary": analysis["summary"],
+            "pro_analysis": analysis["pro_analysis"],
+            "con_analysis": analysis["con_analysis"],
+            "critical_factors": analysis["critical_factors"],
+            "reasoning": analysis["reasoning"],
             "insights": [
-                "Decision generated from full 4-round council transcript.",
-                "Agent memory and peer-opinion updates were applied per exchange.",
+                f"Winner: {analysis['winner']}",
+                f"Critical factors in decision: {analysis['critical_factors'][:80]}..." if analysis["critical_factors"] else "No critical factors identified",
             ],
         },
     }
@@ -255,11 +240,11 @@ class CouncilAPIHandler(BaseHTTPRequestHandler):
             self._send_json(400, {"error": "Invalid JSON payload"})
             return
 
-        mode = str(payload.get("mode", "personal")).strip().lower()
+        mode = str(payload.get("mode", "debate")).strip().lower()
         query = str(payload.get("query", "")).strip()
 
-        if mode not in ("personal", "whatif"):
-            self._send_json(400, {"error": "mode must be 'personal' or 'whatif'"})
+        if mode not in ("debate", "personal", "whatif"):
+            self._send_json(400, {"error": "mode must be 'debate'"})
             return
 
         if not query:
@@ -278,15 +263,18 @@ class CouncilAPIHandler(BaseHTTPRequestHandler):
             return
 
         if self.path == "/api/personalizer/questions":
-            questions = generate_follow_up_questions(query, mode)
+            questions = [
+                "What context should the bots consider?",
+                "Any hard constraints or priorities?",
+            ]
 
             self._send_json(
                 200,
                 {
-                    "mode": mode,
+                    "mode": "debate",
                     "query": query,
                     "questions": questions,
-                    "message": "Provide a bit more context to help the council." if mode == "personal" else "Optional: add any details you want the council to consider."
+                    "message": "Optional context can improve Pro/Con defenses during all 3 rounds.",
                 },
             )
             return
@@ -300,11 +288,11 @@ class CouncilAPIHandler(BaseHTTPRequestHandler):
         )
 
 
-def run_server(host="0.0.0.0", port=None):
+def run_server(host="0.0.0.0", port=8000):
     if port is None:
-        port = int(os.getenv("PORT", "8000"))
+        port = 8000
     server = HTTPServer((host, port), CouncilAPIHandler)
-    print(f"Council API running on http://{host}:{port}")
+    print(f"Battle of the Bots API running on http://{host}:{port}")
     server.serve_forever()
 
 

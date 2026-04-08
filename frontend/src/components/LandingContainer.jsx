@@ -1,11 +1,8 @@
 import { motion } from "framer-motion";
 import Header from "./Header";
-import ModeToggle from "./ModeToggle";
 import SearchBar from "./SearchBar";
 
 function LandingContainer({
-  mode,
-  onModeChange,
   userInput,
   onInputChange,
   onSubmit,
@@ -33,13 +30,9 @@ function LandingContainer({
           <Header />
         </motion.div>
 
-        <div className="mt-10">
-          <ModeToggle mode={mode} onModeChange={onModeChange} disabled={isReadOnly} />
-        </div>
-
         <motion.div
           variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } }}
-          className="mx-auto mt-10 w-full max-w-3xl"
+          className="mx-auto mt-12 w-full max-w-3xl"
         >
           <SearchBar
             value={userInput}

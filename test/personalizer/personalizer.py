@@ -312,7 +312,7 @@ Consensus Snapshot:
             error_detail = error_detail[:217].rstrip() + "..."
         final_response = (
             "Key Insight: Unable to generate a response.\n"
-            f"Recommended Action: Check Featherless final-model settings. Details: {error_detail}"
+            f"Recommended Action: Check Groq model/key access settings. Details: {error_detail}"
         )
 
     return final_response
