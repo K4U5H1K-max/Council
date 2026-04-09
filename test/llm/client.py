@@ -5,9 +5,17 @@ import urllib.error
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Always load this workspace's .env to get API key.
-ENV_PATH = Path(__file__).resolve().parents[1] / ".env"
-load_dotenv(dotenv_path=ENV_PATH, override=True)
+# Load environment files from likely locations.
+# Priority is process env first, then values discovered in .env files.
+_THIS_FILE = Path(__file__).resolve()
+_CANDIDATE_ENV_PATHS = [
+    _THIS_FILE.parents[1] / ".env",  # test/.env
+    _THIS_FILE.parents[2] / ".env",  # repo/.env
+    Path.cwd() / ".env",  # current working directory
+]
+for env_path in _CANDIDATE_ENV_PATHS:
+    if env_path.exists():
+        load_dotenv(dotenv_path=env_path, override=False)
 
 # Groq configuration constants (non-secret configuration)
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"

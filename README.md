@@ -43,7 +43,7 @@ pip install python-dotenv
 
 5. Configure environment variables. Create a `.env` file in the test directory with your LLM API credentials:
 ```bash
-OPENAI_API_KEY=your_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
 Or copy from template if available:
@@ -149,8 +149,8 @@ This setup uses free hosting for both frontend and backend with zero infrastruct
     - Build Command: (leave blank or `pip install python-dotenv`)
     - Start Command: `python api_server.py`
 5. Add environment variable:
-    - Key: `OPENAI_API_KEY`
-    - Value: Your OpenAI API key
+    - Key: `GROQ_API_KEY`
+    - Value: Your Groq API key
 6. Create Web Service (free tier, ~0.5GB RAM)
 7. Wait for deployment and copy your service URL (e.g., `https://council-api.onrender.com`)
 
@@ -181,7 +181,7 @@ For local development pointing to a deployed backend:
 
 #### Backend (.env in `test/` directory)
 ```bash
-OPENAI_API_KEY=your_openai_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
 #### Frontend (.env in `frontend/` directory)

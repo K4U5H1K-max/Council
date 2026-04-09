@@ -1,4 +1,10 @@
-# Python dependencies for the full project (Node packages intentionally excluded)
-# Standard-library modules are not listed.
+# Battle of the Bots: Backend Dependencies
+# Python 3.11+ required
+# Frontend (Node) dependencies are in frontend/package.json
 
-python-dotenv>=1.0.0,<2.0.0
+# Core dependencies
+python-dotenv>=1.0.0,<2.0.0  # Environment variable management (.env file loading)
+
+# Note: This project uses only Python standard library for HTTP backend (http.server, json, urllib)
+# No additional pip packages required for the core debate engine or API server
+# All other imports are either stdlib (re, pathlib, os, json) or local project modules

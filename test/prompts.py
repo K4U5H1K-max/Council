@@ -1,4 +1,4 @@
-"""Role-specific prompts for the Battle of the Bots debate system."""
+x"""Role-specific prompts for the Battle of the Bots debate system."""
 
 PRO_PROMPT = """
 Argue strongly FOR the topic. Provide 3-4 sentences with concrete reasoning.

@@ -1,0 +1,210 @@
+# 🥊 **Battle of the Bots**
+
+### *A Conversational AI-Based Multi-Agent Debate System*
+
+---
+
+## 🔹 **Project Overview**
+
+**Battle of the Bots** is an interactive conversational AI system where multiple language model agents engage in structured debates on a given topic, while another AI agent evaluates their arguments and determines the outcome.
+
+The system simulates a real-world debate using conversational flows:
+
+* One agent argues **in favor (Pro)**
+* One agent argues **against (Con)**
+* A **Judge agent** evaluates both sides and declares a winner
+
+At its core, the project explores how conversational AI systems can move beyond simple question-answering and participate in **multi-turn, role-driven interactions**.
+
+---
+
+## 🎯 **Objective**
+
+* Build a **multi-agent conversational AI system**
+* Simulate structured debates using natural language interaction
+* Explore how AI models generate and defend arguments in conversation
+* Demonstrate how conversational behavior can be shaped using:
+
+  * Role conditioning (Pro vs Con)
+  * Structured prompts
+  * Example-driven responses
+* Design a system that can later be extended to **fine-tuned conversational models**
+
+---
+
+## 🧠 **Core Concept**
+
+Traditional conversational AI systems are designed for:
+
+* Answering questions
+* Assisting users
+* Providing information
+
+In **Battle of the Bots**, we extend this idea by enabling:
+
+👉 **AI-to-AI conversation instead of just human-to-AI interaction**
+
+Each agent participates in a **goal-driven conversation**, where:
+
+* Responses are not isolated
+* Each message is part of a larger argumentative exchange
+* The conversation evolves through multiple turns
+
+This creates a more dynamic and realistic conversational setting.
+
+---
+
+## 🏗️ **System Architecture**
+
+The system consists of three conversational agents:
+
+---
+
+### 🔹 1. Pro Agent
+
+* Engages in conversation by supporting the topic
+* Generates structured, persuasive arguments
+* Maintains a confident and assertive tone
+
+---
+
+### 🔹 2. Con Agent
+
+* Engages in conversation by opposing the topic
+* Provides counterarguments and critiques
+* Maintains a skeptical and analytical tone
+
+---
+
+### 🔹 3. Judge Agent
+
+* Acts as a neutral conversational evaluator
+* Analyzes both arguments within the dialogue
+* Decides the winner and explains the reasoning
+
+---
+
+## 🔄 **Conversational Workflow**
+
+The system operates as a **multi-turn conversational pipeline**:
+
+---
+
+### Step 1: Topic Introduction
+
+A debate question is introduced into the system
+
+---
+
+### Step 2: Initial Responses
+
+* Pro agent presents its argument
+* Con agent responds with a counterargument
+
+---
+
+### Step 3: First Evaluation
+
+* Judge analyzes both responses
+* Provides an initial decision with reasoning
+
+---
+
+### Step 4: Defense Round (Multi-Turn Interaction)
+
+* Agents respond to each other’s arguments
+* Conversation becomes more interactive and dynamic
+
+---
+
+### Step 5: Final Evaluation
+
+* Judge evaluates the full conversation
+* Declares final winner or draw
+
+---
+
+### Step 6: Logging & Analysis
+
+* Full conversational transcript is stored
+* Used for evaluation and comparison
+
+---
+
+## 🧪 **Dataset Design**
+
+The system uses a structured dataset consisting of:
+
+* Multiple **topics** (e.g., sports, politics, technology)
+* Each topic includes:
+
+  * Several **questions**
+  * A **Pro argument**
+  * A **Con argument**
+
+This dataset helps define how arguments should be structured within a conversational setting and can be used for:
+
+* Simulating trained conversational behavior
+* Future fine-tuning of conversational models
+
+---
+
+## ⚙️ **Approach**
+
+### ✅ Prompt-Based Conversational Control
+
+Agents are guided using structured prompts that define:
+
+* Their role (Pro / Con / Judge)
+* Their tone and style
+* Their response structure
+
+---
+
+### ✅ Few-Shot Conversational Learning
+
+* Example arguments are provided within prompts
+* Helps the model mimic realistic conversational patterns
+
+---
+
+### 🔬 **Deep Learning Extension (Planned)**
+
+The system is designed to support:
+
+* Fine-tuning a pre-trained language model on debate-style conversations
+* Specializing conversational agents for different roles
+* Comparing:
+
+  * Base conversational behavior
+  * Adapted (fine-tuned) conversational behavior
+
+---
+
+## 📊 **Evaluation**
+
+The conversational system is evaluated based on:
+
+* Judge decisions (Pro / Con / Draw)
+* Quality of arguments within the conversation
+* Consistency of each agent’s role
+* Ability to respond to opposing viewpoints
+
+---
+
+## 💡 **Key Features**
+
+* Multi-agent conversational AI interaction
+* Structured debate-based dialogue
+* Role-driven conversation dynamics
+* Extendable to deep learning fine-tuning
+* Clear and interpretable conversational outputs
+
+---
+
+## 🚀 **Conclusion**
+
+**Battle of the Bots** demonstrates how conversational AI can be extended beyond simple interactions into **dynamic, multi-agent discussions**.
+
+By enabling AI agents to argue, respond, and evaluate within a structured conversational framework, the project highlights the potential of language models in more complex, interactive scenarios — while also laying the groundwork for future deep learning-based improvements.
+
